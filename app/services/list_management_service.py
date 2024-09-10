@@ -209,7 +209,7 @@ class ListManagementService:
             return {"error": str(e)}
 
     def change_list_type(self, list_id, new_type, role):
-        """Change the type of a list."""
+        """Change the type of list."""
         try:
             self.check_permission(role, 'change_type')
             self.db.update_list_type(list_id, new_type)

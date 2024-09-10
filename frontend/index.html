@@ -1,123 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>List Management Service</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        form { margin-bottom: 20px; }
-        label { display: block; margin: 10px 0 5px; }
-        input, button { padding: 10px; width: 100%; }
-        button { background-color: #4CAF50; color: white; border: none; cursor: pointer; }
-    </style>
-</head>
-<body>
-    <h1>List Management Service</h1>
-
-    <!-- Login Form -->
-    <form id="loginForm">
-        <h3>Login</h3>
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" required>
-
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required>
-
-        <button type="submit">Login</button>
-    </form>
-
-    <!-- Add Value Form -->
-    <form id="addValueForm">
-        <h3>Add Value to List</h3>
-        <label for="listId">List ID</label>
-        <input type="number" id="listId" name="listId" required>
-
-        <label for="value">Value</label>
-        <input type="text" id="value" name="value" required>
-
-        <label for="comment">Comment</label>
-        <input type="text" id="comment" name="comment">
-
-        <button type="submit">Add Value</button>
-    </form>
-
-    <!-- Check Value Form -->
-    <form id="checkValueForm">
-        <h3>Check Value in List</h3>
-        <label for="listType">List Type</label>
-        <input type="text" id="listType" name="listType" required>
-
-        <label for="checkValue">Value to Check</label>
-        <input type="text" id="checkValue" name="checkValue" required>
-
-        <button type="submit">Check Value</button>
-    </form>
-
-    <!-- Results -->
-    <h3>Response</h3>
-    <pre id="response"></pre>
-
-    <script>
-        let token = '';
-
-        // Handle login form submission
-        document.getElementById('loginForm').addEventListener('submit', async function (event) {
-            event.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            const response = await fetch('http://localhost:8000/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            });
-
-            const result = await response.json();
-            if (result.access_token) {
-                token = result.access_token;  // Save the token for future requests
-                document.getElementById('response').innerText = 'Login successful!';
-            } else {
-                document.getElementById('response').innerText = 'Login failed!';
-            }
-        });
-
-        // Handle add value form submission
-        document.getElementById('addValueForm').addEventListener('submit', async function (event) {
-            event.preventDefault();
-            const listId = document.getElementById('listId').value;
-            const value = document.getElementById('value').value;
-            const comment = document.getElementById('comment').value;
-
-            const response = await fetch('http://localhost:8000/api/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ list_id: listId, value, comment })
-            });
-
-            const result = await response.json();
-            document.getElementById('response').innerText = JSON.stringify(result, null, 2);
-        });
-
-        // Handle check value form submission
-        document.getElementById('checkValueForm').addEventListener('submit', async function (event) {
-            event.preventDefault();
-            const listType = document.getElementById('listType').value;
-            const checkValue = document.getElementById('checkValue').value;
-
-            const response = await fetch(`http://localhost:8000/api/check/${listType}?value=${checkValue}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            const result = await response.json();
-            document.getElementById('response').innerText = JSON.stringify(result, null, 2);
-        });
-    </script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + Vue + TS</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
 </html>

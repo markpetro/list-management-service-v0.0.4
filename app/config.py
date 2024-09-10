@@ -1,3 +1,4 @@
+#config.py
 import os
 from dotenv import load_dotenv
 
@@ -13,7 +14,8 @@ class Settings:
     REDIS_HOST = os.getenv("REDIS_HOST")
     REDIS_PORT = os.getenv("REDIS_PORT")
 
-    SECRET_KEY = os.getenv("SECRET_KEY")
+    SECRET_KEY = os.getenv("SECRET_KEY", "your_secret_key")  # Fallback if env var is not set
+    ALGORITHM = os.getenv("ALGORITHM", "HS256")  # Fallback if env var is not set
     DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
 settings = Settings()

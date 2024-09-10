@@ -1,44 +1,33 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text, Boolean, Index
-from sqlalchemy.ext.declarative import declarative_base
+#app/models
+from pydantic import BaseModel
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from app.db_setup import Base
 
-# No need to import Base, List, ListItem inside the same file
-Base = declarative_base()
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True)
+    email = Column(String, unique=True, index=True)
+    hashed_password = Column(String)
+
+class UserCreate(BaseModel):
+    username: str
+    password: str
 
 class List(Base):
-    __tablename__ = 'lists'
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String(255), nullable=False, unique=True)
-    type = Column(String(50), nullable=False)
-    is_deleted = Column(Boolean, default=False, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    items = relationship("ListItem", back_populates="list")
-
-    __table_args__ = (
-        Index('idx_list_type', 'type'),
-        Index('idx_list_is_deleted', 'is_deleted'),  # Index to speed up queries filtering by is_deleted
-    )
-
+    __tablename__ = "lists"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True)
+    type = Column(String, index=True)
+    is_deleted = Column(Integer, default=0)
 
 class ListItem(Base):
-    __tablename__ = 'list_items'
-
-    id = Column(Integer, primary_key=True)
-    list_id = Column(Integer, ForeignKey('lists.id'), nullable=False)
-    value = Column(String(255), nullable=False, index=True)
-    comment = Column(Text)
-    is_deleted = Column(Boolean, default=False, nullable=False)
-    created_by = Column(String(255))
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_by = Column(String(255))
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
-    list = relationship("List", back_populates="items")
-
-    __table_args__ = (
-        Index('idx_list_value', 'value', 'list_id'),
-        Index('idx_listitem_is_deleted', 'is_deleted', 'list_id'),  # Index to speed up filtering on is_deleted and list_id
-    )
+    __tablename__ = "list_items"
+    id = Column(Integer, primary_key=True, index=True)
+    list_id = Column(Integer, ForeignKey('lists.id'))
+    value = Column(String)
+    is_deleted = Column(Integer, default=0)
+    created_by = Column(String)
+    comment = Column(String)
+    list = relationship("List")

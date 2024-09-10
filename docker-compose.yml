@@ -1,30 +1,64 @@
+# docker-compose.yml
 
 services:
   db:
     image: postgres:13
+    restart: always
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
+    networks: 
       - app-network
 
   web:
     build: .
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: db  # Use db directly
+      DB_PORT: 5432  # Default PostgreSQL port
+      DB_NAME: ${DB_NAME}
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@db/${DB_NAME}  # Use db directly
+      REDIS_HOST: redis  # Use redis hostname directly
+      REDIS_PORT: 6379  # Default Redis port
+      API_KEY: ${API_KEY}
+      SECRET_KEY: ${SECRET_KEY}
+      ALGORITHM: ${ALGORITHM}
+      DEBUG: ${DEBUG}
     volumes:
       - .:/app
-    command: uvicorn app.app:app --reload --host 0.0.0.0 --port 8000
+    command: ["./entrypoint.sh"]
     ports:
       - "8000:8000"
     depends_on:
       - db
       - redis
+    networks:
+      - app-network
+
   redis:
-      image: redis:7.4.0
-      ports:
-        - "6379:6379"
+    image: redis:7.4.0
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+  celery:
+    build: .
+    command: celery -A app.celery_app worker --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+    networks:
+      - app-network
+    user: celery  # Run as celery user
+
 
 volumes:
   postgres_data:

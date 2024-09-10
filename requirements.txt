@@ -6,11 +6,11 @@ anyio==4.4.0
 async-timeout==4.0.3
 awscli==1.34.8
 bcrypt==3.2.0
-billiard==3.6.4.0
+billiard>=4.2.0
 botocore==1.35.8
 build==1.2.1
 cachetools==5.5.0
-celery==5.2.7
+celery==5.3.0
 certifi==2024.7.4
 cffi==1.17.0
 charset-normalizer==3.3.2
@@ -24,6 +24,7 @@ dill==0.3.6
 dnslib==0.9.25
 dnspython==2.6.1
 docutils==0.16
+email-validator
 ecdsa==0.19.0
 fastapi==0.109.1
 fastapi-limiter==0.1.6
@@ -56,6 +57,7 @@ pyotp==2.9.0
 pyproject_hooks==1.1.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
+python-multipart
 python-jose==3.3.0
 pytz==2024.1
 PyYAML==6.0.2
